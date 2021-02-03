@@ -1,4 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:flappy_search_bar/flappy_search_bar.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -22,7 +27,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Recipea'),
     );
   }
 }
@@ -45,8 +50,31 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+class Post {
+  final String title;
+  final String body;
+
+  Post(this.title, this.body);
+}
+
 class _MyHomePageState extends State<MyHomePage> {
+  final SearchBarController<Post> _searchBarController = SearchBarController();
   int _counter = 0;
+  bool isReplay = false;
+
+  Future<List<Post>> _getALlPosts(String text) async {
+    await Future.delayed(Duration(seconds: text.length == 4 ? 10 : 1));
+    if (isReplay) return [Post("Replaying !", "Replaying body")];
+    if (text.length == 5) throw Error();
+    if (text.length == 6) return [];
+    List<Post> posts = [];
+
+    var random = new Random();
+    for (int i = 0; i < 100; i++) {
+      posts.add(Post("$text $i", "body random number : ${random.nextInt(100)}"));
+    }
+    return posts;
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -56,6 +84,31 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+    });
+  }
+
+  @override
+  void initState() { 
+    super.initState();
+    setState(() {
+      for (var i = 0; i<100; i++) {
+        list.add(Text(i.toString(), style: TextStyle(fontSize: 50), key: Key(i.toString()),));
+      }
+    });
+  }
+
+  List<IconData> menu = [Icons.home, Icons.person, Icons.settings];
+
+  List<Widget> list = [];
+
+  void _decrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter --;
     });
   }
 
@@ -73,41 +126,246 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Container(
+          //   color: Colors.red,
+          //   width: MediaQuery.of(context).size.width/11,
+          //   height: MediaQuery.of(context).size.height,
+          //   child: Center(
+          //     child: ListView(
+          //       shrinkWrap: true,
+          //       physics: BouncingScrollPhysics(),
+          //       children: [
+          //         for (var i in menu) Container(
+          //           width: 100,
+          //           height: 100,
+          //           color: Colors.red,
+          //           child: Center(child: IconButton(icon: Icon(i, color: Colors.white, size: 50,), onPressed: () {
+          //             print("Menu");
+          //           }))
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SearchBar<Post>(
+                              searchBarPadding: EdgeInsets.symmetric(horizontal: 10),
+                              headerPadding: EdgeInsets.symmetric(horizontal: 10),
+                              listPadding: EdgeInsets.symmetric(horizontal: 10),
+                              onSearch: _getALlPosts,
+                              searchBarController: _searchBarController,
+                              emptyWidget: Text("empty"),
+                              //indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
+                              // header: Row(
+                              //   children: <Widget>[
+                              //     RaisedButton(
+                              //       child: Text("sort"),
+                              //       onPressed: () {
+                              //         _searchBarController.sortList((Post a, Post b) {
+                              //           return a.body.compareTo(b.body);
+                              //         });
+                              //       },
+                              //     ),
+                              //     RaisedButton(
+                              //       child: Text("Desort"),
+                              //       onPressed: () {
+                              //         _searchBarController.removeSort();
+                              //       },
+                              //     ),
+                              //     RaisedButton(
+                              //       child: Text("Replay"),
+                              //       onPressed: () {
+                              //         isReplay = !isReplay;
+                              //         _searchBarController.replayLastSearch();
+                              //       },
+                              //     ),
+                              //   ],
+                              // ),
+                              
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              crossAxisCount: 2,
+                              onItemFound: (Post post, int index) {
+                                return Container(
+                                  color: Colors.red,
+                                  child: ListTile(
+                                    title: Text(post.title, style: TextStyle(color: Colors.white),),
+                                    isThreeLine: true,
+                                    subtitle: Text(post.body, style: TextStyle(color: Colors.white)),
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Detail()));
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        )
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Featured Recipes"),
+                            ),
+                            Container(
+                              width: 800,
+                              height: 200,
+                              child:ListView(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  for (var i in list) Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 200,
+                                      height: 100,
+                                      color: Colors.blue,
+                                      child: InkWell(
+                                        child: Center(child: i),
+                                        onTap: () {
+                                          print(i.key);
+                                        },
+                                      )
+                                    ),
+                                  ),                
+                                ],
+                              ), 
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Categories"),
+                            ),
+                            Container(
+                              width: 800,
+                              height: 200,
+                              child:ListView(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  for (var i in list) Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 200,
+                                      height: 100,
+                                      color: Colors.purple,
+                                      child: InkWell(
+                                        child: Center(child: i),
+                                        onTap: () {
+                                          print(i.key);
+                                        },
+                                      )
+                                    ),
+                                  ),                
+                                ],
+                              ), 
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Low Carbs"),
+                            ),
+                            Container(
+                              width: 800,
+                              height: 200,
+                              child:ListView(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  for (var i in list) Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 200,
+                                      height: 100,
+                                      color: Colors.green,
+                                      child: InkWell(
+                                        child: Center(child: i),
+                                        onTap: () {
+                                          print(i.key);
+                                        },
+                                      )
+                                    ),
+                                  ),                
+                                ],
+                              ), 
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  ),
+                  
+                  
+                ],
+              ),
+            ),
+          ),
+          // Expanded(
+          //   //width: MediaQuery.of(context).size.width/1.2,
+          //   child: ListView(
+          //     shrinkWrap: true,
+          //     physics: BouncingScrollPhysics(),
+          //     scrollDirection: Axis.horizontal,
+          //     children: [
+          //       for (var i in list) Container(
+          //         width: 100,
+          //         height: 100,
+          //         color: Colors.blue,
+          //         child: InkWell(
+          //           child: Center(child: i),
+          //           onTap: () {
+          //             print(i.key);
+          //           },
+          //         )
+          //       ),                
+          //     ],
+          //   ),
+          // ),
+        ],
+      ),// This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+
+class Detail extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Text("Detail"),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
