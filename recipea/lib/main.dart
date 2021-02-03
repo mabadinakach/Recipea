@@ -169,33 +169,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               onSearch: _getALlPosts,
                               searchBarController: _searchBarController,
                               emptyWidget: Text("empty"),
-                              //indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
-                              // header: Row(
-                              //   children: <Widget>[
-                              //     RaisedButton(
-                              //       child: Text("sort"),
-                              //       onPressed: () {
-                              //         _searchBarController.sortList((Post a, Post b) {
-                              //           return a.body.compareTo(b.body);
-                              //         });
-                              //       },
-                              //     ),
-                              //     RaisedButton(
-                              //       child: Text("Desort"),
-                              //       onPressed: () {
-                              //         _searchBarController.removeSort();
-                              //       },
-                              //     ),
-                              //     RaisedButton(
-                              //       child: Text("Replay"),
-                              //       onPressed: () {
-                              //         isReplay = !isReplay;
-                              //         _searchBarController.replayLastSearch();
-                              //       },
-                              //     ),
-                              //   ],
-                              // ),
-                              
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
                               crossAxisCount: 2,
@@ -323,27 +296,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          // Expanded(
-          //   //width: MediaQuery.of(context).size.width/1.2,
-          //   child: ListView(
-          //     shrinkWrap: true,
-          //     physics: BouncingScrollPhysics(),
-          //     scrollDirection: Axis.horizontal,
-          //     children: [
-          //       for (var i in list) Container(
-          //         width: 100,
-          //         height: 100,
-          //         color: Colors.blue,
-          //         child: InkWell(
-          //           child: Center(child: i),
-          //           onTap: () {
-          //             print(i.key);
-          //           },
-          //         )
-          //       ),                
-          //     ],
-          //   ),
-          // ),
         ],
       ),// This trailing comma makes auto-formatting nicer for build methods.
     );
