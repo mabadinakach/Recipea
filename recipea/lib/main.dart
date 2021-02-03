@@ -130,27 +130,6 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Container(
-          //   color: Colors.red,
-          //   width: MediaQuery.of(context).size.width/11,
-          //   height: MediaQuery.of(context).size.height,
-          //   child: Center(
-          //     child: ListView(
-          //       shrinkWrap: true,
-          //       physics: BouncingScrollPhysics(),
-          //       children: [
-          //         for (var i in menu) Container(
-          //           width: 100,
-          //           height: 100,
-          //           color: Colors.red,
-          //           child: Center(child: IconButton(icon: Icon(i, color: Colors.white, size: 50,), onPressed: () {
-          //             print("Menu");
-          //           }))
-          //         )
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
