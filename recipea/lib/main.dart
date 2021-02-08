@@ -1,8 +1,9 @@
 import 'dart:math';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:http/http.dart' as http;
 
 
 void main() {
@@ -62,6 +63,20 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   bool isReplay = false;
 
+  var randomRecipe = null;
+
+  Future getRandomRecipe() async {
+    var url = "https://api.spoonacular.com/recipes/random?limitLicense=true&number=10&apiKey=17aacff51e834c24acb4cd2dcdea4cce";
+    await http.get(url).then((response) {
+      var json1 = json.decode("[" + response.body + "]");
+      setState(() {
+        randomRecipe = json1[0];  
+      });
+      
+    });
+
+  }
+
   Future<List<Post>> _getALlPosts(String text) async {
     await Future.delayed(Duration(seconds: text.length == 4 ? 10 : 1));
     if (isReplay) return [Post("Replaying !", "Replaying body")];
@@ -95,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
         list.add(Text(i.toString(), style: TextStyle(fontSize: 50), key: Key(i.toString()),));
       }
     });
+    getRandomRecipe();
   }
 
   List<IconData> menu = [Icons.home, Icons.person, Icons.settings];
@@ -237,9 +253,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("Low Carbs"),
+                              child: Text("Random Recipes"),
                             ),
-                            Container(
+                            randomRecipe == null ? CircularProgressIndicator() : Container(
                               width: 800,
                               height: 200,
                               child:ListView(
@@ -247,17 +263,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                 physics: BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 children: [
-                                  for (var i in list) Padding(
+                                  for (var i = 0;i<randomRecipe["recipes"].length;i++) Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
-                                      width: 200,
-                                      height: 100,
-                                      color: Colors.green,
-                                      child: InkWell(
-                                        child: Center(child: i),
-                                        onTap: () {
-                                          print(i.key);
-                                        },
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(image: NetworkImage(randomRecipe["recipes"][i]["image"]))
+                                      ),
+                                      width: 300,
+                                      height: 300,
+                                      child: Center(
+                                        child: InkWell(
+                                          child: Container(
+                                            height: 100,
+                                            width: 200,
+                                            color: Colors.grey.withOpacity(0.5),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                child: Text(
+                                                  randomRecipe["recipes"][i]["title"], style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)
+                                                  )
+                                                ),
+                                            )
+                                            ),
+                                          onTap: () {
+                                            print(randomRecipe["recipes"][i]["title"]);
+                                          },
+                                        ),
                                       )
                                     ),
                                   ),                
